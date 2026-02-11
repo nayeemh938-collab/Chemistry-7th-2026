@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSC Chemistry - Chapter 7</title>
+    <style>
+        /* ডিফল্ট থিম (পেইজ ১ এর জন্য - সবুজ) */
+        :root {
+            --primary-color: #2e7d32; /* Green */
+            --secondary-bg: #e8f5e9;
+            --accent-color: #1b5e20;
+            --text-color: #333;
+            --bg-body: #f1f8e9;
+            --card-bg: #ffffff;
+            --btn-inactive: #e0e0e0;
+        }
+
+        /* পেইজ ২ এর জন্য থিম ভেরিয়েবল (জাভাস্ক্রিপ্ট দিয়ে ক্লাস এড করা হবে - নীল/পার্পল) */
+        body.theme-page2 {
+            --primary-color: #1565c0; /* Blue */
+            --secondary-bg: #e3f2fd;
+            --accent-color: #0d47a1;
+            --bg-body: #f0f7ff;
+        }
+
+        body {
+            font-family: 'SolaimanLipi', 'Kalpurush', Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            transition: background-color 0.5s ease;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* হেডার ডিজাইন */
+        header {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-bottom: 5px solid var(--primary-color);
+            transition: border-color 0.5s ease;
+        }
+
+        .exam-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 0;
+        }
+
+        .chapter-info {
+            background-color: var(--secondary-bg);
+            color: var(--primary-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 10px 0;
+            font-weight: 600;
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        .teacher-info {
+            font-size: 0.95rem;
+            color: #555;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .watermark {
+            font-size: 0.8rem;
+            color: #bbb;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* ন্যাভিগেশন বাটন */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background-color: var(--btn-inactive);
+            color: #666;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: #fff;
+            transform: scale(1.02);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+
+        /* পেইজ কন্টেন্ট */
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            border-bottom: 2px dashed var(--primary-color);
+            padding-bottom: 10px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        /* প্রশ্নোত্তর ডিজাইন */
+        .qa-card {
+            background: var(--card-bg);
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .qa-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        details {
+            width: 100%;
+        }
+
+        summary {
+            padding: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.05rem;
+            list-style: none;
+            position: relative;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /* আইকন */
+        summary::after {
+            content: '+';
+            position: absolute;
+            right: 20px;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        details[open] summary::after {
+            transform: rotate(45deg);
+        }
+
+        details[open] summary {
+            border-bottom: 1px solid #eee;
+            color: var(--primary-color);
+        }
+
+        .answer {
+            padding: 15px 20px;
+            background-color: var(--secondary-bg);
+            color: #444;
+            font-size: 1rem;
+            line-height: 1.6;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        /* প্রশ্নের সিরিয়াল নম্বর */
+        .q-num {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--primary-color);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            margin-right: 12px;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            transition: background 0.5s;
+        }
+
+        /* সাবস্ক্রিপ্ট স্টাইল */
+        sub {
+            font-size: 0.75em;
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        @media (max-width: 480px) {
+            .exam-title { font-size: 1.5rem; }
+            summary { font-size: 0.95rem; padding: 14px; }
+            .answer { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1 class="exam-title">SSC-2026</h1>
+        <div class="chapter-info">রসায়ন → ৭ম অধ্যায় → রাসায়নিক বিক্রিয়া</div>
+        <div class="teacher-info">MD Mehedi Hasan Nayeem (BSC in Physics)</div>
+        <div class="watermark">Developed By Nayeem</div>
+    </header>
+
+    <!-- নেভিগেশন ট্যাব -->
+    <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('page1')">জ্ঞানমূলক (ক)</button>
+        <button class="tab-btn" onclick="switchTab('page2')">অনুধাবনমূলক (খ)</button>
+    </nav>
+
+    <!-- পেইজ ১: জ্ঞানমূলক (সবুজ থিম) -->
+    <main id="page1" class="page active">
+        <div class="section-title">জ্ঞানমূলক ও সংক্ষিপ্ত প্রশ্ন- ক Type</div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">১</span>জারক কাকে বলে?</summary>
+                <div class="answer">
+                    রাসায়নিক বিক্রিয়ায় যে বিক্রিয়ক ইলেকট্রন গ্রহণ করে, তাকে জারক বলে।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">২</span>তাপহারী বিক্রিয়া কাকে বলে?</summary>
+                <div class="answer">
+                    যে রাসায়নিক বিক্রিয়ায় তাপ শক্তি শোষিত হয় এবং বিক্রিয়া অঞ্চলের তাপমাত্রা হ্রাস পায়, তাকে তাপহারী বিক্রিয়া বলে।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৩</span>জারণ সংখ্যা কাকে বলে?</summary>
+                <div class="answer">
+                    যৌগ গঠনের সময় কোনো মৌল যে কয়টি ইলেকট্রন বর্জন করে ধনাত্মক আয়ন বা গ্রহণ করে ঋণাত্মক আয়নে পরিণত হয়, সেই সংখ্যাকে (+ বা - চিহ্নসহ) জারণ সংখ্যা বলে।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৪</span>একমুখী বা উভমুখী বিক্রিয়া কাকে বলে?</summary>
+                <div class="answer">
+                    যে বিক্রিয়ায় বিক্রিয়কগুলো কেবল উৎপাদে পরিণত হয় তাকে একমুখী বিক্রিয়া বলে। আর যে বিক্রিয়ায় বিক্রিয়ক থেকে উৎপাদ এবং উৎপাদ থেকে পুনরায় বিক্রিয়ক পাওয়া যায়, তাকে উভমুখী বিক্রিয়া বলে।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৫</span>সমাণু কী বা সমাণুকরণ বিক্রিয়া কাকে বলে?</summary>
+                <div class="answer">
+                    একই আণবিক সংকেত কিন্তু ভিন্ন গাঠনিক সংকেত ও ধর্মবিশিষ্ট যৌগকে সমাণু বলে। যে বিক্রিয়ায় পরমাণুসমূহের পুনর্বিন্যাসের মাধ্যমে একটি যৌগ তার সমাণুতে পরিণত হয়, তাকে সমাণুকরণ বিক্রিয়া বলে।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৬</span>লা-শাতেলিয়ে নীতি কী?</summary>
+                <div class="answer">
+                    কোনো বিক্রিয়া সাম্যাবস্থায় থাকাকালে যদি তাপ, চাপ বা ঘনমাত্রার পরিবর্তন করা হয়, তবে সাম্যাবস্থা এমনভাবে পরিবর্তিত হবে যাতে পরিবর্তনের ফলাফল প্রশমিত হয়।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৭</span>মরিচা কী এবং মরিচার সংকেত লেখো।</summary>
+                <div class="answer">
+                    লোহার তৈরি জিনিস জলীয়বাষ্পের উপস্থিতিতে অক্সিজেনের সাথে বিক্রিয়া করে যে বাদামি আস্তরণ তৈরি করে, তাকে মরিচা বলে।<br>
+                    মরিচার সংকেত: Fe<sub>2</sub>O<sub>3</sub>.nH<sub>2</sub>O (আর্দ্র ফেরিক অক্সাইড)।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৮</span>বিক্রিয়ার হার কাকে বলে?</summary>
+                <div class="answer">
+                    একক সময়ে বিক্রিয়কের ঘনমাত্রা হ্রাস বা উৎপাদের ঘনমাত্রা বৃদ্ধির হারকে বিক্রিয়ার হার বলে।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৯</span>প্রতিস্থাপন বিক্রিয়া কাকে বলে?</summary>
+                <div class="answer">
+                    যে বিক্রিয়ায় কোনো অধিক সক্রিয় মৌল বা যৌগমূলক অপর কোনো কম সক্রিয় মৌল বা যৌগমূলককে প্রতিস্থাপন করে নতুন যৌগ উৎপন্ন করে, তাকে প্রতিস্থাপন বিক্রিয়া বলে।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">১০</span>প্রশমন বিক্রিয়া কাকে বলে?</summary>
+                <div class="answer">
+                    যে বিক্রিয়ায় এসিড ও ক্ষার যুক্ত হয়ে লবণ ও পানি উৎপন্ন করে, তাকে প্রশমন বিক্রিয়া বলে।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">১১</span>দহন বিক্রিয়া কাকে বলে?</summary>
+                <div class="answer">
+                    কোনো মৌল বা যৌগকে বাতাসের অক্সিজেনের উপস্থিতিতে পুড়িয়ে তার উপাদান মৌলের অক্সাইডে পরিণত করার প্রক্রিয়াকে দহন বিক্রিয়া বলে।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">১২</span>তাপ উৎপাদী বিক্রিয়া কাকে বলে?</summary>
+                <div class="answer">
+                    যে রাসায়নিক বিক্রিয়ায় তাপ শক্তি উৎপন্ন হয় এবং বিক্রিয়া অঞ্চলের তাপমাত্রা বৃদ্ধি পায়, তাকে তাপ উৎপাদী বিক্রিয়া বলে।
+                </div>
+            </details>
+        </div>
+    </main>
+
+
+    <!-- পেইজ ২: অনুধাবনমূলক (নীল থিম) -->
+    <main id="page2" class="page">
+        <div class="section-title">অনুধাবনমূলক প্রশ্ন- খ Type</div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">১</span>Na+ বা ফ্লোরিনকে জারক বলা হয় কেন?-ব্যাখ্যা কর।</summary>
+                <div class="answer">
+                    জারক পদার্থের ধর্ম হলো ইলেকট্রন গ্রহণ করা। Na+ একটি ক্যাটায়ন এবং এটি নিষ্ক্রিয় গ্যাসের গঠন লাভ করতে চাইলেও ইলেকট্রন ঘাটতি থাকায় সে ইলেকট্রন গ্রহণ করতে পারে। একইভাবে, ফ্লোরিন (F) এর যোজ্যতা স্তরে ৭টি ইলেকট্রন থাকায় অষ্টক পূরণের জন্য সে ১টি ইলেকট্রন গ্রহণ করার তীব্র প্রবণতা দেখায়। ইলেকট্রন গ্রহণ করে বলে এদের জারক বলা হয়।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">২</span>N-এর যোজ্যতা ইলেকট্রন ও যোজনী ভিন্নতার কারণ কী?</summary>
+                <div class="answer">
+                    নাইট্রোজেনের (N) ইলেকট্রন বিন্যাসের সর্বশেষ কক্ষপথে মোট ৫টি ইলেকট্রন থাকে, তাই এর যোজ্যতা ইলেকট্রন ৫। কিন্তু রাসায়নিক বন্ধন গঠনে নাইট্রোজেন সাধারণত ৩টি ইলেকট্রন শেয়ার করে বা গ্রহণ করে, তাই এর যোজনী ৩। সর্বশেষ কক্ষপথের ইলেকট্রন সংখ্যা এবং বন্ধনে অংশগ্রহণকারী ইলেকট্রন সংখ্যা ভিন্ন হওয়ায় যোজ্যতা ইলেকট্রন ও যোজনী ভিন্ন হয়।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৩</span>রাসায়নিক সাম্যাবস্থা একটি গতিময় অবস্থা-ব্যাখ্যা কর।</summary>
+                <div class="answer">
+                    উভমুখী বিক্রিয়ায় যখন সম্মুখমুখী বিক্রিয়ার হার এবং পশ্চাৎমুখী বিক্রিয়ার হার সমান হয়, তখন তাকে রাসায়নিক সাম্যাবস্থা বলে। আপাতদৃষ্টিতে মনে হয় বিক্রিয়া থেমে গেছে, কিন্তু বাস্তবে বিক্রিয়া থামে না। সম্মুখ ও পশ্চাৎ বিক্রিয়া একই গতিতে চলতে থাকে বলে ঘনমাত্রার কোনো পরিবর্তন হয় না। তাই বলা হয়, রাসায়নিক সাম্যাবস্থা একটি গতিময় অবস্থা।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৪</span>পিঁপড়া/মৌমাছি পোকার কামড়ের ক্ষতস্থানে কেন চুন প্রয়োগ করা হয়?</summary>
+                <div class="answer">
+                    পিঁপড়া বা মৌমাছির কামড়ে শরীরে ফরমিক এসিড প্রবেশ করে, যার ফলে জ্বালাপোড়া হয়। চুন (ক্যালসিয়াম অক্সাইড বা হাইড্রোক্সাইড) হলো ক্ষারজাতীয় পদার্থ। ক্ষতস্থানে চুন প্রয়োগ করলে এটি এসিডের সাথে প্রশমন বিক্রিয়া করে লবণ ও পানি উৎপন্ন করে, ফলে এসিডের কার্যকারিতা নষ্ট হয় এবং জ্বালাপোড়া কমে।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৫</span>জারণ সংখ্যা ও যোজনী একই বিষয় নয়-ব্যাখ্যা কর।</summary>
+                <div class="answer">
+                    যোজনী হলো একটি মৌলের অন্য মৌলের সাথে যুক্ত হওয়ার ক্ষমতা, যা সবসময় পূর্ণসংখ্যা এবং ধনাত্মক হয়। অন্যদিকে, জারণ সংখ্যা হলো যৌগ গঠনে ইলেকট্রন ত্যাগ বা গ্রহণের ফলে সৃষ্ট চার্জের সংখ্যা, যা ধনাত্মক, ঋণাত্মক, শূন্য বা ভগ্নাংশ হতে পারে। তাই জারণ সংখ্যা ও যোজনী এক বিষয় নয়।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৬</span>প্রশমন বিক্রিয়া একটি নন-রেডক্স বিক্রিয়া কেন?</summary>
+                <div class="answer">
+                    রেডক্স বিক্রিয়া হতে হলে ইলেকট্রনের আদান-প্রদান এবং জারণ সংখ্যার পরিবর্তন ঘটতে হয়। প্রশমন বিক্রিয়ায় (এসিড+ক্ষার) বিক্রিয়ক ও উৎপাদের মৌলসমূহের জারণ সংখ্যার কোনো পরিবর্তন ঘটে না। এখানে কেবল এসিডের H+ এবং ক্ষারের OH- মিলে পানি উৎপন্ন করে। ইলেকট্রন স্থানান্তর হয় না বলে এটি নন-রেডক্স বিক্রিয়া।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৭</span>সংশ্লেষণ বিক্রিয়া বলতে কী বোঝায়? ব্যাখ্যা কর।</summary>
+                <div class="answer">
+                    যে সংযোজন বিক্রিয়ায় দুই বা ততোধিক মৌলিক পদার্থ যুক্ত হয়ে একটি নতুন যৌগ উৎপন্ন করে, তাকে সংশ্লেষণ বিক্রিয়া বলে। যেমন: C + O<sub>2</sub> → CO<sub>2</sub>। এখানে কার্বন ও অক্সিজেন দুটিই মৌল। সব সংশ্লেষণ বিক্রিয়াই সংযোজন, কিন্তু সব সংযোজন সংশ্লেষণ নয় (কারণ সংযোজনে যৌগও যুক্ত হতে পারে)।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৮</span>পলিমাকরণ বিক্রিয়া বলতে কী বুঝ?</summary>
+                <div class="answer">
+                    যে বিক্রিয়ায় কোনো যৌগের অনেকগুলো ক্ষুদ্র অণু (মনোমার) উচ্চ তাপ ও চাপে পরস্পর যুক্ত হয়ে বৃহৎ আণবিক ভরবিশিষ্ট একটি বড় অণু (পলিমার) গঠন করে, তাকে পলিমাকরণ বিক্রিয়া বলে। যেমন: ইথিলিন গ্যাস থেকে পলিথিন তৈরি।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">৯</span>কেরোসিনের দহন একটি রাসায়নিক পরিবর্তন-ব্যাখ্যা কর।</summary>
+                <div class="answer">
+                    কেরোসিন পোড়ালে বাতাসের অক্সিজেনের সাথে বিক্রিয়া করে কার্বন ডাই-অক্সাইড, জলীয় বাষ্প, তাপ ও আলো উৎপন্ন হয়। উৎপন্ন পদার্থগুলোর ধর্ম কেরোসিন থেকে সম্পূর্ণ ভিন্ন এবং এদেরকে পুনরায় কেরোসিনে ফিরিয়ে আনা সম্ভব নয়। যেহেতু স্থায়ীভাবে নতুন পদার্থের সৃষ্টি হয়, তাই এটি একটি রাসায়নিক পরিবর্তন।
+                </div>
+            </details>
+        </div>
+
+        <div class="qa-card">
+            <details>
+                <summary><span class="q-num">১০</span>সকল সংযোজন বিক্রিয়া সংশ্লেষণ বিক্রিয়া নয়-ব্যাখ্যা কর।</summary>
+                <div class="answer">
+                    সংযোজন বিক্রিয়ায় দুই বা ততোধিক পদার্থ (মৌল বা যৌগ) মিলে একটি যৌগ গঠন করে। কিন্তু সংশ্লেষণ বিক্রিয়া হতে হলে বিক্রিয়কগুলোকে অবশ্যই কেবল 'মৌল' হতে হবে। যেমন: CaO + CO<sub>2</sub> → CaCO<sub>3</sub> এটি সংযোজন বিক্রিয়া কিন্তু সংশ্লেষণ নয়, কারণ বিক্রিয়কগুলো যৌগ। তাই বলা যায়, সকল সংশ্লেষণ সংযোজন হলেও সকল সংযোজন সংশ্লেষণ নয়।
+                </div>
+            </details>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2026 Developed By Nayeem
+    </footer>
+</div>
+
+<script>
+    function switchTab(pageId) {
+        // সব পেইজ এবং বাটন রিসেট করা
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+        // নতুন পেইজ এবং বাটন একটিভ করা
+        document.getElementById(pageId).classList.add('active');
+        
+        // বাটনের একটিভ ক্লাস যোগ করা এবং থিম চেঞ্জ করা
+        const buttons = document.querySelectorAll('.tab-btn');
+        if (pageId === 'page1') {
+            buttons[0].classList.add('active');
+            document.body.classList.remove('theme-page2');
+        } else {
+            buttons[1].classList.add('active');
+            document.body.classList.add('theme-page2');
+        }
+
+        // স্ক্রল ইফেক্ট (মোবাইলের জন্য)
+        if(window.innerWidth < 600){
+            document.getElementById(pageId).scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+    }
+</script>
+
+</body>
+</html>
